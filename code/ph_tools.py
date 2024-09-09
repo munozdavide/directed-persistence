@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import dionysus as dio
 
 
 def persistence_dgms(filtration, max_dim=1):
@@ -15,6 +14,7 @@ def persistence_dgms(filtration, max_dim=1):
         dgms (numpy.array): 2d array of persistence points ()
     '''
 
+    import gudhi
     dgms = filtration.persistence()
 
     dims = np.array([dgms[i][0] for i in range(len(dgms))])
@@ -34,6 +34,7 @@ def persistence_dgms_from_dionysus(filtration, max_dim=1):
         dgms (numpy.array): 2d array of persistence points
     '''
 
+    import dionysus as dio
     dgms_dio = dio.init_diagrams(dio.homology_persistence(filtration), filtration)
 
     dims, births, deaths = [], [], []
