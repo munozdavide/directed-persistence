@@ -48,13 +48,15 @@ def persistence_dgms_from_dionysus(filtration, max_dim=1):
     return np.array([dims, births, deaths])
 
 def plot_dgms(dgms, figtitle=None, filename=None, print_repeats=False,
-              max_dim=1, ax=None, inf_val=0, alpha=0.3):
+              max_dim=1, ax=None, inf_val=0, alpha=0.8):
     '''
     Plots persistence diagrams
     '''
 
     # Colors for dimensions, up to 4
-    colors = ['red', 'blue', 'green', 'orange', 'brown']
+    #colors = ['red', 'blue', 'green', 'orange', 'brown']
+    colors = ['C0', 'C1', 'C2', 'C3', 'C4']
+    shapes = ['o', 's', '^', '*', 'D']
 
     from copy import copy
     dims, births, deaths = copy(dgms)
@@ -84,12 +86,12 @@ def plot_dgms(dgms, figtitle=None, filename=None, print_repeats=False,
     # Plot every point
     visible_dims = [False]*5
     for i in range(len(dims)):
-        ax.plot([births[i],], [deaths[i],], 'o', c=colors[int(dims[i])], alpha=alpha)
+        ax.scatter([births[i],], [deaths[i],], c=colors[int(dims[i])], marker=shapes[int(dims[i])], alpha=alpha)
         visible_dims[int(dims[i])] = True
 
     # Plot hidden points to add labels
     for i,d in enumerate(visible_dims):
-        if d: ax.plot([-1,],[-1,], 'o', c=colors[i], label='Dim '+str(i))
+        if d: ax.scatter([-1,],[-1,], c=colors[i], marker=shapes[i], label='Dim '+str(i))
     ax.legend(loc='lower right')
 
     if filename != None: ax.savefig(filename+'.png', dpi=400)
