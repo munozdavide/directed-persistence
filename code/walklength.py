@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.sparse.csgraph import shortest_path
-from itertools import combinations
+from itertools import combinations, permutations
 import gudhi
 
 
@@ -35,15 +35,30 @@ def walklength_filtration(digraph_data, max_dim=1):
         filt_val = min([mat[e[i-1],e[i]] for i in range(2)])
         filt.insert(e, filt_val)
 
-    ## Triangles (2-simplices)
-    # Find filtration value for all triangles
-    for t in combinations(vert_list, 3):
-        clockwise = sum(sorted([mat[t[i-1],t[i]] for i in range(3)])[:-1])
-        c_clockwise = sum(sorted([mat[t[i-2],t[i]] for i in range(3)])[:-1])
-        # I'll explain later...
-        filt_val = min(clockwise,c_clockwise)
+    if max_dim > 0:
+        ## Triangles (2-simplices)
+        # Find filtration value for all triangles
+        for t in combinations(vert_list, 3):
+            clockwise = sum(sorted([mat[t[i-1],t[i]] for i in range(3)])[:-1])
+            c_clockwise = sum(sorted([mat[t[i-2],t[i]] for i in range(3)])[:-1])
+            # I'll explain later...
+            filt_val = min(clockwise,c_clockwise)
 
-        filt.insert(t, filt_val)
+            filt.insert(t, filt_val)
+
+    if max_dim > 1:
+        ## Tetrahedrons (3-simplices)
+        # Find filtration value for all tetrahedrons
+        d = 3
+        for t in combinations(vert_list, d+1):
+            possible_fvals = []
+            for perm in permutations(range(d),d):
+                cp = [*perm,d] # cyclic path
+                min_path_cp = sum(sorted([mat[t[cp[i-1]],t[cp[i]]] for i in range(d+1)])[:-1])
+                possible_fvals.append(min_path_cp)
+            # I'll explain later...
+            filt_val = min(possible_fvals)
+            filt.insert(t, filt_val)
 
 
     return filt
